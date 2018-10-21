@@ -17,9 +17,7 @@
 package com.github.chrisblutz.jetway.caching.features;
 
 import com.github.chrisblutz.jetway.caching.CacheConverter;
-import com.github.chrisblutz.jetway.caching.CacheEntry;
 import com.github.chrisblutz.jetway.features.Airport;
-import com.github.chrisblutz.jetway.features.Airports;
 
 import java.util.UUID;
 
@@ -119,66 +117,7 @@ public class AirportCacheUtils {
 
         if (airportConverter == null) {
 
-            airportConverter = new CacheConverter<UUID, Airport>() {
-
-                @Override
-                public Airport load(CacheEntry entry) {
-
-                    return Airport.loadAirportFromCache(entry);
-                }
-
-                @Override
-                public void save(Airport airport, CacheEntry entry) {
-
-                    airport.saveToCache(entry);
-                }
-
-                @Override
-                public UUID loadKey(String str) {
-
-                    return UUID.fromString(str);
-                }
-
-                @Override
-                public String saveKey(UUID key) {
-
-                    return key.toString();
-                }
-
-                @Override
-                public void loadPersistentData(UUID key, String data) {
-
-                    String[] parts = data.split("=", 2);
-                    String[] lengths = parts[0].split(",");
-                    data = parts[1];
-
-                    int nameLength = Integer.parseInt(lengths[0]);
-                    String name = data.substring(0, nameLength);
-                    data = data.substring(nameLength);
-
-                    int designatorLength = Integer.parseInt(lengths[1]);
-                    String designator = data.substring(0, designatorLength);
-                    data = data.substring(designatorLength);
-
-                    int identifierLength = Integer.parseInt(lengths[2]);
-                    String identifier = data.substring(0, identifierLength);
-
-                    Airports.register(key, name, designator, identifier);
-                }
-
-                @Override
-                public String savePersistentData(Airport airport) {
-
-                    String name = airport.getName();
-                    String designator = airport.getIATADesignator();
-                    String identifier = airport.getICAOIdentifier();
-                    int nameLength = name.length();
-                    int designatorLength = designator.length();
-                    int identifierLength = identifier == null ? 0 : identifier.length();
-
-                    return nameLength + "," + designatorLength + "," + identifierLength + "=" + name + designator + (identifier == null ? "" : identifier);
-                }
-            };
+            airportConverter = new AirportCacheConverter();
         }
 
         return airportConverter;

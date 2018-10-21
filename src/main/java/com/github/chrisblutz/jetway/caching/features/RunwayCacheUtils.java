@@ -17,9 +17,7 @@
 package com.github.chrisblutz.jetway.caching.features;
 
 import com.github.chrisblutz.jetway.caching.CacheConverter;
-import com.github.chrisblutz.jetway.caching.CacheEntry;
 import com.github.chrisblutz.jetway.features.Runway;
-import com.github.chrisblutz.jetway.features.Runways;
 
 import java.util.UUID;
 
@@ -76,44 +74,7 @@ public class RunwayCacheUtils {
 
         if (runwayConverter == null) {
 
-            runwayConverter = new CacheConverter<UUID, Runway>() {
-
-                @Override
-                public Runway load(CacheEntry entry) {
-
-                    return Runway.loadRunwayFromCache(entry);
-                }
-
-                @Override
-                public void save(Runway runway, CacheEntry entry) {
-
-                    runway.saveToCache(entry);
-                }
-
-                @Override
-                public UUID loadKey(String str) {
-
-                    return UUID.fromString(str);
-                }
-
-                @Override
-                public String saveKey(UUID key) {
-
-                    return key.toString();
-                }
-
-                @Override
-                public void loadPersistentData(UUID key, String data) {
-
-                    Runways.registerDesignator(key, data);
-                }
-
-                @Override
-                public String savePersistentData(Runway runway) {
-
-                    return runway.getDesignator();
-                }
-            };
+            runwayConverter = new RunwayCacheConverter();
         }
 
         return runwayConverter;

@@ -19,12 +19,12 @@ package com.github.chrisblutz.jetway.aixm;
 import aero.aixm.v5.CodeAirportHeliportType;
 import aero.aixm.v5.CodeYesNoType;
 import aero.aixm.v5.impl.CodeYesNoTypeImpl;
+import com.github.chrisblutz.jetway.aixm.converters.DefaultAIXMConverter;
 import com.github.chrisblutz.jetway.features.airports.FacilityType;
 import com.github.chrisblutz.jetway.features.airports.Ownership;
 import com.github.chrisblutz.jetway.features.positioning.GeoCoordinate;
 import gov.faa.aixm51.apt.AirportHeliportExtensionType;
 import net.opengis.gml.x32.DirectPositionType;
-import org.apache.xmlbeans.XmlAnySimpleType;
 
 import java.util.HashMap;
 import java.util.List;
@@ -62,6 +62,7 @@ public final class Converters {
             return new Class<?>[]{CodeYesNoType.class};
         }
     };
+
     /**
      * This {@link AIXMConverter} instance converts AIXM data into {@link GeoCoordinate} values.
      */
@@ -90,202 +91,46 @@ public final class Converters {
             return new Class<?>[]{DirectPositionType.class};
         }
     };
-    private static final Class<?>[] DEFAULT_ACCEPTED_TYPES = new Class<?>[]{XmlAnySimpleType.class, String.class};
+
     /**
      * This {@link AIXMConverter} instance converts AIXM data into {@code byte} values.
      */
-    public static final AIXMConverter<Byte> BYTE_CONVERTER = new AIXMConverter<Byte>() {
+    public static final AIXMConverter<Byte> BYTE_CONVERTER = new DefaultAIXMConverter<>((byte) 0, Byte::parseByte);
 
-        @Override
-        public Byte convert(Object value) {
-
-            String string = getDefaultTypeAsString(value);
-            if (string == null) {
-
-                return 0;
-
-            } else {
-
-                return Byte.parseByte(string);
-            }
-        }
-
-        @Override
-        public Class<?>[] acceptedTypes() {
-
-            return DEFAULT_ACCEPTED_TYPES;
-        }
-    };
     /**
      * This {@link AIXMConverter} instance converts AIXM data into {@code char} values.
      */
-    public static final AIXMConverter<Character> CHARACTER_CONVERTER = new AIXMConverter<Character>() {
+    public static final AIXMConverter<Character> CHARACTER_CONVERTER = new DefaultAIXMConverter<>('\0', string -> string.length() == 1 ? string.charAt(0) : '\0');
 
-        @Override
-        public Character convert(Object value) {
-
-            String string = getDefaultTypeAsString(value);
-            if (string == null || string.length() == 1) {
-
-                return '\0';
-
-            } else {
-
-                return string.charAt(0);
-            }
-        }
-
-        @Override
-        public Class<?>[] acceptedTypes() {
-
-            return DEFAULT_ACCEPTED_TYPES;
-        }
-    };
     /**
      * This {@link AIXMConverter} instance converts AIXM data into {@code double} values.
      */
-    public static final AIXMConverter<Double> DOUBLE_CONVERTER = new AIXMConverter<Double>() {
+    public static final AIXMConverter<Double> DOUBLE_CONVERTER = new DefaultAIXMConverter<>(0d, Double::parseDouble);
 
-        @Override
-        public Double convert(Object value) {
-
-            String string = getDefaultTypeAsString(value);
-            if (string == null) {
-
-                return 0d;
-
-            } else {
-
-                return Double.parseDouble(string);
-            }
-        }
-
-        @Override
-        public Class<?>[] acceptedTypes() {
-
-            return DEFAULT_ACCEPTED_TYPES;
-        }
-    };
     /**
      * This {@link AIXMConverter} instance converts AIXM data into {@code float} values.
      */
-    public static final AIXMConverter<Float> FLOAT_CONVERTER = new AIXMConverter<Float>() {
+    public static final AIXMConverter<Float> FLOAT_CONVERTER = new DefaultAIXMConverter<>(0f, Float::parseFloat);
 
-        @Override
-        public Float convert(Object value) {
-
-            String string = getDefaultTypeAsString(value);
-            if (string == null) {
-
-                return 0f;
-
-            } else {
-
-                return Float.parseFloat(string);
-            }
-        }
-
-        @Override
-        public Class<?>[] acceptedTypes() {
-
-            return DEFAULT_ACCEPTED_TYPES;
-        }
-    };
     /**
      * This {@link AIXMConverter} instance converts AIXM data into {@code int} values.
      */
-    public static final AIXMConverter<Integer> INTEGER_CONVERTER = new AIXMConverter<Integer>() {
-
-        @Override
-        public Integer convert(Object value) {
-
-            String string = getDefaultTypeAsString(value);
-            if (string == null) {
-
-                return 0;
-
-            } else {
-
-                return Integer.parseInt(string);
-            }
-        }
-
-        @Override
-        public Class<?>[] acceptedTypes() {
-
-            return DEFAULT_ACCEPTED_TYPES;
-        }
-    };
+    public static final AIXMConverter<Integer> INTEGER_CONVERTER = new DefaultAIXMConverter<>(0, Integer::parseInt);
 
     /**
      * This {@link AIXMConverter} instance converts AIXM data into {@code long} values.
      */
-    public static final AIXMConverter<Long> LONG_CONVERTER = new AIXMConverter<Long>() {
-
-        @Override
-        public Long convert(Object value) {
-
-            String string = getDefaultTypeAsString(value);
-            if (string == null) {
-
-                return 0L;
-
-            } else {
-
-                return Long.parseLong(string);
-            }
-        }
-
-        @Override
-        public Class<?>[] acceptedTypes() {
-
-            return DEFAULT_ACCEPTED_TYPES;
-        }
-    };
+    public static final AIXMConverter<Long> LONG_CONVERTER = new DefaultAIXMConverter<>(0L, Long::parseLong);
 
     /**
      * This {@link AIXMConverter} instance converts AIXM data into {@link String} values.
      */
-    public static final AIXMConverter<String> STRING_CONVERTER = new AIXMConverter<String>() {
-
-        @Override
-        public String convert(Object value) {
-
-            return getDefaultTypeAsString(value);
-        }
-
-        @Override
-        public Class<?>[] acceptedTypes() {
-
-            return DEFAULT_ACCEPTED_TYPES;
-        }
-    };
+    public static final AIXMConverter<String> STRING_CONVERTER = new DefaultAIXMConverter<>(null, string -> string);
 
     /**
      * This {@link AIXMConverter} instance converts AIXM data into {@code short} values.
      */
-    public static final AIXMConverter<Short> SHORT_CONVERTER = new AIXMConverter<Short>() {
-
-        @Override
-        public Short convert(Object value) {
-
-            String string = getDefaultTypeAsString(value);
-            if (string == null) {
-
-                return 0;
-
-            } else {
-
-                return Short.parseShort(string);
-            }
-        }
-
-        @Override
-        public Class<?>[] acceptedTypes() {
-
-            return DEFAULT_ACCEPTED_TYPES;
-        }
-    };
+    public static final AIXMConverter<Short> SHORT_CONVERTER = new DefaultAIXMConverter<>((short) 0, Short::parseShort);
 
     private static Map<Class<?>, AIXMConverter<?>> enumConverters = new HashMap<>();
 
@@ -369,21 +214,5 @@ public final class Converters {
                 return new Class<?>[]{AirportHeliportExtensionType.OwnershipType.Enum.class};
             }
         });
-    }
-
-    private static String getDefaultTypeAsString(Object value) {
-
-        if (value instanceof XmlAnySimpleType) {
-
-            return ((XmlAnySimpleType) value).getStringValue();
-
-        } else if (value instanceof String) {
-
-            return (String) value;
-
-        } else {
-
-            return null;
-        }
     }
 }
