@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+    <Properties>
+        <Property name="logDir">.jetway/logs/</Property>
+    </Properties>
+    <Appenders>
+        <File name="FILE" fileName="${logDir}/jetway.log" append="false">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+        </File>
+    </Appenders>
+    <Loggers>
+        <Logger name="AIXM Loader" level="debug"/>
+        <Logger name="Cache" level="debug"/>
+        <Logger name="Cache I/O" level="debug"/>
+        <Logger name="Feature Provider" level="debug"/>
+        <Logger name="Jetway" level="debug"/>
+        <Root level="error">
+            <AppenderRef ref="FILE"/>
+        </Root>
+    </Loggers>
+</Configuration>
