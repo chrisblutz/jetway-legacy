@@ -27,7 +27,7 @@ import com.github.chrisblutz.jetway.exceptions.AIXMDataException;
 public class AIXMFeature extends AIXMData {
 
     private String type;
-    private AIXMFeatureExtension extension = null;
+    private AIXMData extension = null;
 
     /**
      * Creates a new feature instance with the specified
@@ -49,23 +49,46 @@ public class AIXMFeature extends AIXMData {
     /**
      * Gets the AIXM extension associated with this feature.
      *
-     * @return The {@link AIXMFeatureExtension} representing
+     * @return The {@link AIXMData} representing
      * the extension associated with this feature
      * @throws AIXMDataException if the extension cannot be retrieved
      */
-    public AIXMFeatureExtension extension() {
+    public AIXMData extension() {
+
+        return extension(false);
+    }
+
+    /**
+     * Gets the AIXM extension associated with this feature, allowing
+     * {@code null} if the extension cannot be retrieved and
+     * {@code allowNull} is {@code true}.
+     *
+     * @return The {@link AIXMData} representing
+     * the extension associated with this feature
+     * @throws AIXMDataException if the extension cannot be retrieved and
+     *                           {@code null} values are not allowed.
+     */
+    public AIXMData extension(boolean allowNull) {
 
         if (extension == null) {
 
             try {
 
                 Object extensionAbstract = ((Object[]) data.getClass().getMethod("getExtensionArray").invoke(data))[0];
-                extension = new AIXMFeatureExtension(extensionAbstract.getClass().getMethod("getAbstract" + type + "Extension").invoke(extensionAbstract));
+                extension = new AIXMData(extensionAbstract.getClass().getMethod("getAbstract" + type + "Extension").invoke(extensionAbstract));
 
             } catch (Exception e) {
 
-                AIXM.getLogger().error("Could not load AIXM extension for feature of type " + type + ".", e);
-                throw new AIXMDataException("Could not load AIXM extension for feature of type " + type + ".");
+                extension = AIXMNullData.getInstance();
+                if (allowNull) {
+
+                    return extension;
+
+                } else {
+
+                    AIXM.getLogger().error("Could not load AIXM extension for feature of type " + type + ".", e);
+                    throw new AIXMDataException("Could not load AIXM extension for feature of type " + type + ".");
+                }
             }
         }
 
