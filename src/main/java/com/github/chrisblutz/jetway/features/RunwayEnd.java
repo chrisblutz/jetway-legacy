@@ -19,9 +19,11 @@ package com.github.chrisblutz.jetway.features;
 import com.github.chrisblutz.jetway.aixm.AIXMFeature;
 import com.github.chrisblutz.jetway.aixm.AIXMLoadable;
 import com.github.chrisblutz.jetway.aixm.AIXMType;
+import com.github.chrisblutz.jetway.aixm.Types;
 import com.github.chrisblutz.jetway.caching.CacheAppendable;
 import com.github.chrisblutz.jetway.caching.CacheEntry;
 import com.github.chrisblutz.jetway.caching.features.RunwayCacheUtils;
+import com.github.chrisblutz.jetway.features.positioning.GeoCoordinate;
 
 /**
  * Represents a specific end of a {@link Runway}.
@@ -31,6 +33,7 @@ import com.github.chrisblutz.jetway.caching.features.RunwayCacheUtils;
 public class RunwayEnd implements AIXMLoadable, CacheAppendable {
 
     private String designator;
+    private GeoCoordinate geoPosition;
 
     /**
      * Loads a {@code RunwayEnd} instance based on the specified {@link CacheEntry}.
@@ -57,6 +60,17 @@ public class RunwayEnd implements AIXMLoadable, CacheAppendable {
     }
 
     /**
+     * Retrieves the geographic position of this end of the runway.
+     *
+     * @return The {@link GeoCoordinate} representing the location
+     * of this end of the runway.
+     */
+    public GeoCoordinate getGeographicPosition() {
+
+        return geoPosition;
+    }
+
+    /**
      * Loads data from an {@link AIXMFeature} into this {@code RunwayEnd}
      * object.
      *
@@ -68,7 +82,14 @@ public class RunwayEnd implements AIXMLoadable, CacheAppendable {
     @Override
     public void loadFromAIXM(AIXMType type, AIXMFeature feature) {
 
-        designator = feature.getString("Designator");
+        if (type == Types.RUNWAY_BASE_END_TYPE || type == Types.RUNWAY_RECIPROCAL_END_TYPE) {
+
+            designator = feature.getString("Designator");
+
+        } else if (type == Types.RUNWAY_DIRECTION_TYPE) {
+
+            geoPosition = feature.extension(true).checkedCrawl("ElevatedPoint").getGeographicCoordinate("Position");
+        }
     }
 
     /**
@@ -81,6 +102,19 @@ public class RunwayEnd implements AIXMLoadable, CacheAppendable {
     public void loadFromCache(String prefix, CacheEntry entry) {
 
         designator = entry.get(prefix + RunwayCacheUtils.END_DESIGNATOR);
+
+        boolean hasGeoPos = entry.getBoolean(prefix + RunwayCacheUtils.END_HAS_GEO_POSITION);
+
+        if (hasGeoPos) {
+
+            double latitude = entry.getDouble(prefix + RunwayCacheUtils.END_LATITUDE);
+            double longitude = entry.getDouble(prefix + RunwayCacheUtils.END_LONGITUDE);
+            geoPosition = new GeoCoordinate(latitude, longitude);
+
+        } else {
+
+            geoPosition = null;
+        }
     }
 
     /**
@@ -93,5 +127,13 @@ public class RunwayEnd implements AIXMLoadable, CacheAppendable {
     public void saveToCache(String prefix, CacheEntry entry) {
 
         entry.put(prefix + RunwayCacheUtils.END_DESIGNATOR, getDesignator());
+
+        boolean hasGeoPos = getGeographicPosition() != null;
+        entry.put(prefix+RunwayCacheUtils.END_HAS_GEO_POSITION, hasGeoPos);
+        if (hasGeoPos) {
+
+            entry.put(prefix + RunwayCacheUtils.END_LATITUDE, getGeographicPosition().getLatitude());
+            entry.put(prefix + RunwayCacheUtils.END_LONGITUDE, getGeographicPosition().getLongitude());
+        }
     }
 }

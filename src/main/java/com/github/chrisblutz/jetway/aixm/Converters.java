@@ -74,6 +74,12 @@ public final class Converters {
             if (value instanceof DirectPositionType) {
 
                 List values = ((DirectPositionType) value).getListValue();
+
+                if (values.size() < 2) {
+
+                    return null;
+                }
+
                 double latitude = (double) values.get(1);
                 double longitude = (double) values.get(0);
 

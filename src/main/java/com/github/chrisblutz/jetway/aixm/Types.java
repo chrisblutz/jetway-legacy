@@ -44,6 +44,8 @@ public final class Types {
      * This {@link AIXMType} corresponds to the reciprocal end of runways
      */
     public static final AIXMType RUNWAY_RECIPROCAL_END_TYPE = AIXMType.forIdentifier("Runway[id=RWY_RECIPROCAL_END]", Runway.class);
+    public static final AIXMType RUNWAY_DIRECTION_TYPE = AIXMType.forIdentifier("RunwayDirection");
+
     private Types() {
 
     }
@@ -57,5 +59,6 @@ public final class Types {
         AIXM.registerType(RUNWAY_TYPE, Runway.class, Jetway.getRunwayCache(), true);
         AIXM.registerType(RUNWAY_BASE_END_TYPE, RunwayEnd.class, null, true);
         AIXM.registerType(RUNWAY_RECIPROCAL_END_TYPE, RunwayEnd.class, null, true);
+        AIXM.registerType(RUNWAY_DIRECTION_TYPE, RunwayEnd.class, null, false);
     }
 }

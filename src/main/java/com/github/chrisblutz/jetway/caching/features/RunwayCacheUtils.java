@@ -62,6 +62,18 @@ public class RunwayCacheUtils {
      * The key for runway end designators
      */
     public static final String END_DESIGNATOR = "endDesignator";
+    /**
+     * The key for runway end geographic position presence
+     */
+    public static final String END_HAS_GEO_POSITION = "endHasGeoPosition";
+    /**
+     * The key for runway end latitudes
+     */
+    public static final String END_LATITUDE = "endLatitude";
+    /**
+     * The key for runway end longitudes
+     */
+    public static final String END_LONGITUDE = "endLongitude";
 
     private static CacheConverter<UUID, Runway> runwayConverter = null;
 
